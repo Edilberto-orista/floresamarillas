@@ -346,8 +346,11 @@ body{
   </div>
 
   <div class="card">
+    <!-- EDITA AQUÍ el nombre -->
     <p class="name">Marlene</p>
+    <!-- El texto del mensaje NO se edita aquí, se edita más abajo en "fullText" dentro del <script> -->
     <p class="message" id="message"><span id="typed"></span><span class="typed-cursor" id="cursor">&nbsp;</span></p>
+    <!-- EDITA AQUÍ la frase de firma -->
     <p class="signoff" id="signoff">Con todo mi cariño, para ti</p>
   </div>
 </div>
@@ -454,6 +457,9 @@ function startBouquet(){
     }
   });
 
+  // ============================================
+  // EDITA AQUÍ el mensaje principal (el que se escribe solo)
+  // ============================================
   var fullText = 'Hoy 21 de septiembre, cuando hasta el aire cambia y todo empieza a florecer, quiero que sepas que tú eres mi primavera todos los días del año. Cada día contigo florece como este jardín: despacio, sin prisa, pero seguro y hermoso. Eres la luz amarilla que hace que todo, hasta lo simple, se vuelva especial. Gracias por llenar mi vida de color, calma y ganas de sonreír.';
   var typedEl = document.getElementById('typed');
   var cursorEl = document.getElementById('cursor');
