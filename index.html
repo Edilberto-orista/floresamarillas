@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Para Marlene</title>
+<style>
+:root{
+  --sky-top:#fff6d8;
+  --sky-mid:#ffe3ad;
+  --sky-bottom:#ffcf8a;
+  --ground:#f7edc8;
+  --petal:#ffce3a;
+  --petal-dark:#f5a623;
+  --center:#7a4b1e;
+  --stem:#4f7942;
+  --ink:#5c3d1e;
+  --card-bg:rgba(255,255,255,0.72);
+  --accent:#e08a1e;
+  --paper:#f6e6c4;
+  --paper-dark:#e5c98f;
+  --paper-line:#d6b46e;
+  --bokeh:255,224,170;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --sky-top:#241a2e;
+    --sky-mid:#3a2440;
+    --sky-bottom:#4a2a3a;
+    --ground:#2e2712;
+    --petal:#ffcf3f;
+    --petal-dark:#e69a1e;
+    --center:#5a3813;
+    --stem:#3f6b3a;
+    --ink:#fbe9c6;
+    --card-bg:rgba(30,24,12,0.72);
+    --accent:#ffd257;
+    --paper:#3c2f22;
+    --paper-dark:#2c2216;
+    --paper-line:#5a4630;
+    --bokeh:255,197,120;
+  }
+}
+:root[data-theme="dark"]{
+  --sky-top:#241a2e;
+  --sky-mid:#3a2440;
+  --sky-bottom:#4a2a3a;
+  --ground:#2e2712;
+  --petal:#ffcf3f;
+  --petal-dark:#e69a1e;
+  --center:#5a3813;
+  --stem:#3f6b3a;
+  --ink:#fbe9c6;
+  --card-bg:rgba(30,24,12,0.72);
+  --accent:#ffd257;
+  --paper:#3c2f22;
+  --paper-dark:#2c2216;
+  --paper-line:#5a4630;
+  --bokeh:255,197,120;
+}
+
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;}
+body{
+  background:
+    radial-gradient(ellipse 60% 40% at 18% 10%, rgba(255,255,255,.55), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 85% 6%, rgba(255,214,140,.5), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 50% 105%, rgba(255,178,120,.4), transparent 60%),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-bottom) 100%);
+  font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  color:var(--ink);
+  overflow-x:hidden;
+}
+
+.bg-decor{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:0;
+}
+.bokeh{
+  position:absolute;
+  bottom:-10vh;
+  border-radius:50%;
+  filter:blur(1px);
+  background:radial-gradient(circle, rgba(var(--bokeh),.9), rgba(var(--bokeh),.25) 55%, transparent 72%);
+  animation:floatUp linear infinite;
+  opacity:0;
+}
+@keyframes floatUp{
+  0%{ transform:translate(0,0); opacity:0; }
+  8%{ opacity:.7; }
+  85%{ opacity:.55; }
+  100%{ transform:translate(var(--drift,20px), -115vh); opacity:0; }
+}
+@media (prefers-reduced-motion: reduce){
+  .bokeh{ animation:none; opacity:0; }
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Great+Vibes&display=swap');
+
+.stage{
+  position:relative;
+  z-index:1;
+  min-height:100%;
+  padding:48px 20px calc(48px + env(safe-area-inset-bottom,0px));
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  gap:32px;
+}
+
+.field{
+  position:relative;
+  width:100%;
+  max-width:300px;
+  height:min(48vh,340px);
+  min-height:260px;
+  margin:0 auto;
+}
+
+.wrap-paper{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  width:230px;
+  max-width:82%;
+  transform:translateX(-50%);
+  opacity:0;
+  animation:appear .7s ease forwards;
+  animation-delay:5.4s;
+  z-index:12;
+  filter:drop-shadow(0 10px 18px rgba(60,40,10,.28));
+}
+.wrap-paper .sheet{ fill:var(--paper); }
+.wrap-paper .sheet.back{ fill:var(--paper-dark); }
+.wrap-paper .fold{ stroke:var(--paper-line); stroke-width:1.4; opacity:.55; fill:none; }
+.wrap-paper .band path{ fill:var(--petal-dark); }
+.wrap-paper .band path.hi{ fill:var(--petal); }
+
+.flower{
+  position:absolute;
+  left:50%;
+  bottom:44px;
+  width:64px;
+  margin-left:-32px;
+  transform-origin:bottom center;
+  opacity:0;
+  animation:appear .4s ease forwards;
+}
+
+@keyframes appear{ to{ opacity:1; } }
+
+.flower svg{width:100%;height:auto;display:block;overflow:visible;}
+
+.petal{ fill:var(--petal); stroke:var(--petal-dark); }
+.petal.alt{ fill:var(--petal-dark); stroke:var(--petal-dark); }
+.stem{ stroke:var(--stem); stroke-width:5; fill:none; stroke-linecap:round; }
+.leaf{ fill:var(--stem); stroke:var(--stem); }
+.bud-center{ fill:var(--center); stroke:var(--center); }
+.bud-dot{ fill:var(--sky-bottom); opacity:0; transition:opacity .4s ease .7s; }
+.flower.bloomed .bud-dot{ opacity:.9; }
+
+.draw{
+  stroke-width:1.4;
+  fill-opacity:0;
+  transition: stroke-dashoffset .55s ease, fill-opacity .45s ease .3s;
+}
+.draw.on{ stroke-dashoffset:0 !important; fill-opacity:1; }
+.stem.draw{ stroke-width:5; }
+.petal.draw{ stroke-width:1.6; }
+
+@keyframes sway{
+  0%,100%{ transform:rotate(var(--tilt,0deg)); }
+  50%{ transform:rotate(calc(var(--tilt,0deg) + 2.5deg)); }
+}
+
+.flower .swayer{
+  animation:sway 4.5s ease-in-out infinite;
+  animation-delay:inherit;
+  transform-origin:bottom center;
+}
+
+.card{
+  background:var(--card-bg);
+  backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,0.4);
+  border-radius:18px;
+  padding:28px 30px;
+  max-width:560px;
+  width:100%;
+  text-align:center;
+  box-shadow:0 20px 60px -20px rgba(90,60,10,0.35);
+  opacity:0;
+  transform:translateY(14px);
+  animation:cardIn 1.2s ease forwards;
+  animation-delay:8.3s;
+}
+@keyframes cardIn{
+  to{ opacity:1; transform:translateY(0); }
+}
+
+.name{
+  font-family:'Great Vibes', cursive;
+  font-size:clamp(2.6rem,9vw,3.6rem);
+  color:var(--accent);
+  margin:0 0 6px;
+  line-height:1;
+}
+
+.message{
+  font-size:clamp(1.05rem,3vw,1.35rem);
+  font-style:italic;
+  line-height:1.55;
+  margin:0;
+  min-height:6.6em;
+}
+
+.typed-cursor{
+  display:inline-block;
+  width:2px;
+  margin-left:2px;
+  background:var(--accent);
+  animation:blink 1s step-start infinite;
+}
+@keyframes blink{ 50%{ opacity:0; } }
+
+.signoff{
+  margin-top:14px;
+  font-size:1rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--accent);
+  opacity:0;
+  transition:opacity .6s ease;
+}
+.signoff.shown{ opacity:.85; }
+
+@media (prefers-reduced-motion: reduce){
+  .flower{ animation:none; opacity:1; }
+  .swayer{ animation:none; }
+  .draw{ transition:none; stroke-dashoffset:0 !important; fill-opacity:1 !important; }
+  .card{ animation:none; opacity:1; transform:none; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-decor" id="bgDecor"></div>
+
+<div class="stage">
+  <div class="field" id="field">
+    <svg class="wrap-paper" viewBox="0 0 230 190" xmlns="http://www.w3.org/2000/svg">
+      <path class="sheet back" d="M18 70 C 40 40, 70 58, 88 30 C 100 10, 112 34, 115 46 C 118 34, 132 8, 146 30 C 162 56, 194 40, 214 68 L 150 188 L 80 188 Z"/>
+      <path class="sheet" d="M30 78 C 48 52, 72 66, 90 42 C 100 26, 112 42, 115 52 C 118 42, 130 24, 142 42 C 160 64, 186 50, 202 76 L 148 186 L 82 186 Z"/>
+      <path class="fold" d="M115 60 L 102 186"/>
+      <path class="fold" d="M115 60 L 128 186"/>
+      <path class="fold" d="M60 90 L 82 186"/>
+      <path class="fold" d="M172 92 L 150 186"/>
+      <g class="band" transform="translate(115,96)">
+        <path d="M0 -20 C -26 -20, -34 -2, -16 10 C -6 16, 2 10, 3 -1 C 4 10, 12 16, 22 10 C 40 -2, 32 -20, 0 -20 Z"/>
+        <path class="hi" d="M0 -13 C -14 -13, -18 -3, -9 4 C -4 7, 0 4, 1 -2 C 2 4, 6 7, 11 4 C 20 -3, 16 -13, 0 -13 Z"/>
+        <rect x="-4" y="4" width="8" height="18" rx="2"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="card">
+    <p class="name">Marlene</p>
+    <p class="message" id="message"><span id="typed"></span><span class="typed-cursor" id="cursor">&nbsp;</span></p>
+    <p class="signoff" id="signoff">Con todo mi cariño, para ti</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var reduceMotionBg = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotionBg){
+    var bgDecor = document.getElementById('bgDecor');
+    var n = 16;
+    for (var b = 0; b < n; b++){
+      var dot = document.createElement('div');
+      dot.className = 'bokeh';
+      var size = 4 + Math.random() * 9;
+      dot.style.width = size + 'px';
+      dot.style.height = size + 'px';
+      dot.style.left = (Math.random() * 100) + '%';
+      dot.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
+      var dur = 14 + Math.random() * 14;
+      dot.style.animationDuration = dur + 's';
+      dot.style.animationDelay = (Math.random() * dur) + 's';
+      bgDecor.appendChild(dot);
+    }
+  }
+})();
+
+(function(){
+  var field = document.getElementById('field');
+  var heights = [0.78,1,0.85,0.66,0.92,0.72,0.6];
+  var startDelays = [0.1,0.9,1.7,2.5,3.3,4.0,4.7]; // seconds between flowers starting to draw
+  var tilts = [-34,-20,-7,2,12,24,36]; // fan angles around the bouquet base
+  var lifts = [4,10,16,10,14,6,0]; // px, taller flowers sit slightly higher
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  tilts.forEach(function(tilt, i){
+    var wrap = document.createElement('div');
+    wrap.className = 'flower';
+    wrap.style.width = (56 * heights[i] + 24) + 'px';
+    wrap.style.marginLeft = -((56 * heights[i] + 24) / 2) + 'px';
+    wrap.style.bottom = (26 + lifts[i]) + 'px';
+    wrap.style.setProperty('--tilt', tilt + 'deg');
+    wrap.style.zIndex = 10 - Math.abs(i - 3);
+    wrap.style.animationDelay = (startDelays[i] * 0.35) + 's';
+
+    var h = 150 * heights[i];
+    var petalCount = 10;
+    var petalsSvg = '';
+    var step = 3;
+    for (var p = 0; p < petalCount; p++){
+      var ang = (360 / petalCount) * p;
+      var cls = (p % 2 === 0) ? 'petal' : 'petal alt';
+      petalsSvg +=
+        '<path class="' + cls + ' draw" data-step="' + (step++) + '" ' +
+        'd="M0 -3 C 8 -6, 11 -22, 0 -30 C -11 -22, -8 -6, 0 -3 Z" ' +
+        'transform="rotate(' + ang + ')"/>';
+    }
+    var centerSvg =
+      '<circle class="bud-center draw" data-step="' + (step++) + '" r="10"/>' +
+      '<circle class="bud-dot" cx="-3" cy="-2" r="1.4"/>' +
+      '<circle class="bud-dot" cx="3" cy="-1" r="1.4"/>' +
+      '<circle class="bud-dot" cx="0" cy="3" r="1.4"/>' +
+      '<circle class="bud-dot" cx="-2" cy="4.5" r="1.2"/>' +
+      '<circle class="bud-dot" cx="4" cy="3" r="1.2"/>';
+
+    wrap.innerHTML =
+      '<div class="swayer" style="animation-delay:' + (startDelays[i] + 1.2) + 's">' +
+      '<svg viewBox="0 0 64 ' + (h+44) + '" xmlns="http://www.w3.org/2000/svg">' +
+        '<path class="stem draw" data-step="0" d="M32 ' + (h+42) + ' C 30 ' + (h*0.6) + ', 34 ' + (h*0.3) + ', 32 24" />' +
+        '<path class="leaf draw" data-step="1" d="M32 ' + (h*0.72) + ' C 8 ' + (h*0.7) + ', 4 ' + (h*0.5) + ', 30 ' + (h*0.54) + ' Z" />' +
+        '<path class="leaf draw" data-step="2" d="M32 ' + (h*0.5) + ' C 58 ' + (h*0.44) + ', 62 ' + (h*0.28) + ', 34 ' + (h*0.34) + ' Z" />' +
+        '<g transform="translate(32,24)">' +
+          petalsSvg +
+          centerSvg +
+        '</g>' +
+      '</svg>' +
+      '</div>';
+
+    field.appendChild(wrap);
+
+    var parts = wrap.querySelectorAll('.draw');
+    var baseDelay = startDelays[i] * 1000;
+    var stepGap = 170; // ms between each stroke starting
+
+    parts.forEach(function(el){
+      var len;
+      try { len = el.getTotalLength(); } catch(e){ len = 60; }
+      el.style.strokeDasharray = len;
+      el.style.strokeDashoffset = len;
+
+      if (reduceMotion) { el.classList.add('on'); return; }
+
+      var elStep = parseInt(el.getAttribute('data-step'), 10);
+      window.setTimeout(function(){
+        el.classList.add('on');
+      }, baseDelay + elStep * stepGap);
+    });
+
+    var lastStep = step - 1; // center circle's step
+    if (!reduceMotion){
+      window.setTimeout(function(){ wrap.classList.add('bloomed'); }, baseDelay + lastStep * stepGap);
+    } else {
+      wrap.classList.add('bloomed');
+    }
+  });
+
+  var fullText = 'Cada día contigo florece como este jardín: despacio, sin prisa, pero seguro y hermoso. Eres la luz amarilla que hace que todo, hasta lo simple, se vuelva especial. Gracias por llenar mi vida de color, calma y ganas de sonreír.';
+  var typedEl = document.getElementById('typed');
+  var cursorEl = document.getElementById('cursor');
+  var signoffEl = document.getElementById('signoff');
+  var cardStart = 8300; // ms, matches .card animation-delay
+
+  function typeText(){
+    if (reduceMotion){
+      typedEl.textContent = fullText;
+      cursorEl.style.display = 'none';
+      signoffEl.classList.add('shown');
+      return;
+    }
+    var i = 0;
+    var speed = 32;
+    (function step(){
+      if (i <= fullText.length){
+        typedEl.textContent = fullText.slice(0, i);
+        i++;
+        window.setTimeout(step, speed);
+      } else {
+        cursorEl.style.display = 'none';
+        signoffEl.classList.add('shown');
+      }
+    })();
+  }
+
+  window.setTimeout(typeText, cardStart + 500);
+})();
+</script>
+</body>
+</html>
