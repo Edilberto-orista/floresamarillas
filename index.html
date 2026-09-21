@@ -129,10 +129,12 @@ body{
   max-width:82%;
   transform:translateX(-50%);
   opacity:0;
-  animation:appear .7s ease forwards;
-  animation-delay:5.4s;
   z-index:12;
   filter:drop-shadow(0 10px 18px rgba(60,40,10,.28));
+}
+.started .wrap-paper{
+  animation:appear .7s ease forwards;
+  animation-delay:5.4s;
 }
 .wrap-paper .sheet{ fill:var(--paper); }
 .wrap-paper .sheet.back{ fill:var(--paper-dark); }
@@ -195,6 +197,8 @@ body{
   box-shadow:0 20px 60px -20px rgba(90,60,10,0.35);
   opacity:0;
   transform:translateY(14px);
+}
+.started .card{
   animation:cardIn 1.2s ease forwards;
   animation-delay:8.3s;
 }
@@ -242,13 +246,87 @@ body{
   .flower{ animation:none; opacity:1; }
   .swayer{ animation:none; }
   .draw{ transition:none; stroke-dashoffset:0 !important; fill-opacity:1 !important; }
-  .card{ animation:none; opacity:1; transform:none; }
+  .started .card{ animation:none; opacity:1; transform:none; }
+}
+
+.cover{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:transparent;
+  transition:opacity .7s ease, visibility .7s;
+}
+.cover.hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.petal-btn{
+  appearance:none;
+  border:none;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  padding:30px 38px;
+  border-radius:24px;
+  background:var(--card-bg);
+  backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,0.45);
+  box-shadow:0 20px 60px -20px rgba(90,60,10,0.4);
+  font-family:'Cormorant Garamond', Georgia, serif;
+  color:var(--ink);
+  animation:pulse 2.4s ease-in-out infinite;
+}
+.petal-btn:active{ transform:scale(.97); }
+.petal-btn svg{ width:54px; height:54px; }
+.petal-btn .cta-name{
+  font-family:'Great Vibes', cursive;
+  font-size:2.1rem;
+  color:var(--accent);
+  line-height:1;
+}
+.petal-btn .cta-hint{
+  font-size:1rem;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  opacity:.8;
+}
+@keyframes pulse{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.035); }
+}
+@media (prefers-reduced-motion: reduce){
+  .petal-btn{ animation:none; }
 }
 </style>
 </head>
 <body>
 
 <div class="bg-decor" id="bgDecor"></div>
+
+<div class="cover" id="cover">
+  <button type="button" class="petal-btn" id="startBtn">
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(32,32)">
+        <ellipse fill="#ffce3a" cx="0" cy="-16" rx="7" ry="15"/>
+        <ellipse fill="#f5a623" cx="15" cy="-8" rx="7" ry="15" transform="rotate(72 15 -8)"/>
+        <ellipse fill="#ffce3a" cx="9" cy="12" rx="7" ry="15" transform="rotate(144 9 12)"/>
+        <ellipse fill="#f5a623" cx="-9" cy="12" rx="7" ry="15" transform="rotate(216 -9 12)"/>
+        <ellipse fill="#ffce3a" cx="-15" cy="-8" rx="7" ry="15" transform="rotate(288 -15 -8)"/>
+        <circle fill="#7a4b1e" r="9"/>
+      </g>
+    </svg>
+    <span class="cta-name">Marlene</span>
+    <span class="cta-hint">Toca aquí</span>
+  </button>
+</div>
 
 <div class="stage">
   <div class="field" id="field">
@@ -296,7 +374,7 @@ body{
   }
 })();
 
-(function(){
+function startBouquet(){
   var field = document.getElementById('field');
   var heights = [0.78,1,0.85,0.66,0.92,0.72,0.6];
   var startDelays = [0.1,0.9,1.7,2.5,3.3,4.0,4.7]; // seconds between flowers starting to draw
@@ -404,6 +482,20 @@ body{
   }
 
   window.setTimeout(typeText, cardStart + 500);
+}
+
+(function(){
+  var cover = document.getElementById('cover');
+  var startBtn = document.getElementById('startBtn');
+  var started = false;
+
+  startBtn.addEventListener('click', function(){
+    if (started) return;
+    started = true;
+    document.documentElement.classList.add('started');
+    cover.classList.add('hide');
+    startBouquet();
+  });
 })();
 </script>
 </body>
